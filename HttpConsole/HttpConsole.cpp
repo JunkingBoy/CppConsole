@@ -1,17 +1,12 @@
-﻿#include<iostream>
+﻿#pragma comment(lib, "curl.lib")
+#include<iostream>
 #include<Windows.h>
 #include<fstream>
 #include<string>
 #include<curl/curl.h>
+#define _CRT_SECUESS_NO_WARNING
 
 using namespace std;
-
-int main()
-{
-	downLoadGitForWindows();
-	cout << "Download Complete!" << endl;
-	return 0;
-}
 
 /*
 	读取windows注册表中给定键的值
@@ -72,22 +67,24 @@ void downLoadFile(const char* url, const char* fileName)
 	CURLcode res;
 
 	curl = curl_easy_init();
-	if (curl && isGitForWindowsInstalled)
+	if (curl && isGitForWindowsInstalled())
 	{
-		fp = fopen(fileName, "Git-2.40.1-64-bit.exe");
-		curl_easy_setopt(curl, CURLOPT_URL, url);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downLoadFileCallBack);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-		res = curl_easy_perform(curl);
-		curl_easy_cleanup(curl);
-		fclose(fp);
-		/*
-			1、打开文件
-			2、通过curl设置访问资源
-			3、写入资源
-			4、关闭curl句柄,释放占用资源
-			5、关闭文件
-		*/
+		if (fopen_s(&fp, fileName, "Git-2.40.1-64-bit.exe") == 0)
+		{
+			curl_easy_setopt(curl, CURLOPT_URL, url);
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downLoadFileCallBack);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+			res = curl_easy_perform(curl);
+			curl_easy_cleanup(curl);
+			fclose(fp);
+			/*
+				1、打开文件
+				2、通过curl设置访问资源
+				3、写入资源
+				4、关闭curl句柄,释放占用资源
+				5、关闭文件
+			*/
+		}
 	}
 	else
 	{
@@ -98,6 +95,13 @@ void downLoadFile(const char* url, const char* fileName)
 void downLoadGitForWindows()
 {
 	const char* url = "https://github.com/git-for-windows/git/releases/download/v2.40.1.windows.1/Git-2.40.1-64-bit.exe";
-	const char* fileName = "Git";
+	const char* fileName = "Git-2.40.1-64-bit.exe";
 	downLoadFile(url, fileName);
+}
+
+int main()
+{
+	downLoadGitForWindows();
+	cout << "Download Complete!" << endl;
+	return 0;
 }
