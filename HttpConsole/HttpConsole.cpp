@@ -72,7 +72,7 @@ void downLoadFile(const char* url, const char* fileName)
 	CURLcode res;
 
 	curl = curl_easy_init();
-	if (curl)
+	if (curl && isGitForWindowsInstalled)
 	{
 		fp = fopen(fileName, "Git-2.40.1-64-bit.exe");
 		curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -88,6 +88,10 @@ void downLoadFile(const char* url, const char* fileName)
 			4、关闭curl句柄,释放占用资源
 			5、关闭文件
 		*/
+	}
+	else
+	{
+		cout << "Installed GitForWindows" << endl;
 	}
 }
 
